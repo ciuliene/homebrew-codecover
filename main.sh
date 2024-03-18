@@ -24,7 +24,7 @@ if [ -f "$config_file" ]; then
     source "$config_file"
 fi
 
-rel_test_dir=""
+rel_test_dir=$test_dir
 
 if [ $# -gt 0 ]; then
     # Parse arguments
