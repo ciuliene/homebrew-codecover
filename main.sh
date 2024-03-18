@@ -2,7 +2,7 @@
 
 # Arguments
 
-config_file=$(realpath .codecover 2>/dev/null)
+config_file=$(pwd)/.codecover
 language=""
 test_dir=""
 exclude_files=""
@@ -24,6 +24,8 @@ if [ -f "$config_file" ]; then
     source "$config_file"
 fi
 
+rel_test_dir=""
+
 if [ $# -gt 0 ]; then
     # Parse arguments
     while (( "$#" )); do
@@ -38,6 +40,7 @@ if [ $# -gt 0 ]; then
             ;;
         --test-dir)
             test_dir="$2"
+            rel_test_dir="$2"
             shift 2
             ;;
         --exclude-files)
@@ -75,9 +78,18 @@ if [ "$test_dir" = "" ]; then
     exit 1
 fi
 
+# Make test_dir absolute
+test_dir=$(realpath $test_dir 2> /dev/null)
+
+# Check if the test directory exists
+if [ ! -d "$test_dir" ]; then
+    echo "\033[31mTest directory not found\033[0m"
+    exit 1
+fi
+
 # Save the parameters to lcov.config
 echo "language=\"$language\"" > "$config_file"
-echo "test_dir=\"$test_dir\"" >> "$config_file"
+echo "test_dir=\"$rel_test_dir\"" >> "$config_file"
 echo "exclude_files=\"$exclude_files\"" >> "$config_file"
 if [ "$language" = "csharp" ]; then
     echo "skip_build=$skip_build" >> "$config_file"
@@ -90,9 +102,6 @@ echo "Excluded Files\t\033[34m$exclude_files\033[0m"
 if [ "$language" = "csharp" ]; then
     echo "Skip Build\t\033[34m$skip_build\033[0m"
 fi
-
-# Make test_dir absolute
-test_dir=$(realpath $test_dir)
 
 if [ "$language" = "python" ]; then
     
