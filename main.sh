@@ -265,6 +265,8 @@ elif [ "$language" = "csharp" ]; then
             # Check if the report is generated
             if [ $? -ne 0 ]; then
                 echo "\033[31mError generating report\033[0m"
+            else
+                echo "\033[32mCoverage report generated\033[0m"
             fi
         fi
     fi
@@ -288,7 +290,5 @@ elif [ "$language" = "csharp" ]; then
     done
 
     find . -type d -name 'tmp_cov' -exec rm -rf {} +
-
-    echo "\033[32mCoverage report generated\033[0m"
 
 fi
