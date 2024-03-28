@@ -227,7 +227,8 @@ elif [ "$language" = "csharp" ]; then
 
 ############################################################
 # BUILD AND TEST
-    
+    build_pass=1
+
     if [ "$skip_build" = false ]; then
         dotnet clean --configuration Release --verbosity quiet # --verbosity can be quiet, minimal, normal, detailed, and diagnostic
         dotnet build $solution --configuration Release --verbosity quiet
@@ -235,35 +236,42 @@ elif [ "$language" = "csharp" ]; then
         # Exit if the build failed
         if [ $? -ne 0 ]; then
             echo "\033[31mBuild failed\033[0m"
-            exit 1
+            build_pass=0
         fi
     fi
 
-    test_reports="tmp_cov/report.xml"
+    if [ $build_pass -eq 1 ]; then
 
-    dotnet test --no-build $solution --configuration Release --verbosity minimal /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="./$test_reports" /p:ExcludeByFile=\"$exclude_files\"
+        test_reports="tmp_cov/report.xml"
 
-    # Check if the tests fail and print the reason
-    if [ $? -ne 0 ]; then
-        echo "\033[31mTests failed\033[0m"
-        exit 1
+        test_pass=1
+
+        dotnet test --no-build $solution --configuration Release --verbosity minimal /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="./$test_reports" /p:ExcludeByFile=\"$exclude_files\"
+
+        # Check if the tests fail and print the reason
+        if [ $? -ne 0 ]; then
+            echo "\033[31mTests failed\033[0m"
+            test_pass=0
+        fi
+
+    ############################################################
+    # GENERATE REPORT IN LCOV FORMAT
+
+        if [ $test_pass -eq 1 ]; then
+            # Merge all coverage reports with reportgenerator
+
+            reportgenerator -reports:"**/$test_reports" -targetdir:. -reporttypes:lcov
+
+            # Check if the report is generated
+            if [ $? -ne 0 ]; then
+                echo "\033[31mError generating report\033[0m"
+                exit 1
+            fi
+        fi
     fi
 
-############################################################
-# GENERATE REPORT IN LCOV FORMAT
-
-    # Merge all coverage reports with reportgenerator
-
-    reportgenerator -reports:"**/$test_reports" -targetdir:. -reporttypes:lcov
-
-    # Check if the report is generated
-    if [ $? -ne 0 ]; then
-        echo "\033[31mError generating report\033[0m"
-        exit 1
-    fi
-
-############################################################
-# CLEAN UP
+    ############################################################
+    # CLEAN UP
 
     idx=1
     for prj in $test_prj; do
