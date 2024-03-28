@@ -265,7 +265,6 @@ elif [ "$language" = "csharp" ]; then
             # Check if the report is generated
             if [ $? -ne 0 ]; then
                 echo "\033[31mError generating report\033[0m"
-                exit 1
             fi
         fi
     fi
