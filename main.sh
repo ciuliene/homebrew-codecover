@@ -98,7 +98,7 @@ fi
 # Print arguments
 echo "Language\t\033[34m$language\033[0m"
 echo "Test Directory\t\033[34m$test_dir\033[0m"
-echo "Excluded Files\t\033[34m$exclude_files\033[0m"
+echo "Exclude Files\t\033[34m$exclude_files\033[0m"
 if [ "$language" = "csharp" ]; then
     echo "Skip Build\t\033[34m$skip_build\033[0m"
 fi
