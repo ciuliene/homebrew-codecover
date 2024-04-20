@@ -16,7 +16,9 @@ jobs:
 
       - name: Get latest tag
         id: get_release_tag
-        run: echo "tag_name=$(git describe --tags --abbrev=0)" >> "$GITHUB_OUTPUT"
+        run: |
+          git fetch --tags
+          echo "tag_name=$(git describe --tags --abbrev=0)" >> "$GITHUB_OUTPUT"
       
       - name: Create archive
         run: |
