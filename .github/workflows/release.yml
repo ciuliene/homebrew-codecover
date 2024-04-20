@@ -41,6 +41,7 @@ jobs:
         uses: ncipollo/release-action@v1.14.0
         with:
           artifacts: "codecover-v${{ steps.get_release_tag.outputs.tag_name }}.tar.gz"
+          tag: ${{ steps.get_release_tag.outputs.tag_name }}
 
       # - name: Upload release asset
       #   id: upload-release-asset
