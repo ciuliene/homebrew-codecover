@@ -5,14 +5,16 @@
 config_file=$(pwd)/.codecover
 language=""
 test_dir=""
+filter=""
 exclude_files=""
 skip_build=false # only for csharp
 
 usage() {
-    echo "Usage: sh $0 (--csharp|--python) --test-dir <directory> [--exclude-files <file1,file2,...>] [--skip-build] [-h|--help]"
+    echo "Usage: sh $0 (--csharp|--python) --test-dir <directory> [--filter <filter>] [--exclude-files <file1,file2,...>] [--skip-build] [-h|--help]"
     echo "    --csharp           Use for csharp projects"
     echo "    --python           Use for python projects"
     echo "    --test-dir         Directory containing the test files"
+    echo "    --filter           Filter for the test files (optional)"
     echo "    --exclude-files    Comma separated list of files to exclude (optional)"
     echo "    --skip-build       Skip building the project (only for csharp)"
     echo "    -h, --help         Display this help and exit"
@@ -41,6 +43,10 @@ if [ $# -gt 0 ]; then
         --test-dir)
             test_dir="$2"
             rel_test_dir="$2"
+            shift 2
+            ;;
+        --filter)
+            filter="$2"
             shift 2
             ;;
         --exclude-files)
@@ -90,6 +96,7 @@ fi
 # Save the parameters to lcov.config
 echo "language=\"$language\"" > "$config_file"
 echo "test_dir=\"$rel_test_dir\"" >> "$config_file"
+echo "filter=\"$filter\"" >> "$config_file"
 echo "exclude_files=\"$exclude_files\"" >> "$config_file"
 if [ "$language" = "csharp" ]; then
     echo "skip_build=$skip_build" >> "$config_file"
@@ -98,6 +105,7 @@ fi
 # Print arguments
 echo "Language\t\033[34m$language\033[0m"
 echo "Test Directory\t\033[34m$test_dir\033[0m"
+echo "Filter\t\t\033[34m$filter\033[0m"
 echo "Exclude Files\t\033[34m$exclude_files\033[0m"
 if [ "$language" = "csharp" ]; then
     echo "Skip Build\t\033[34m$skip_build\033[0m"
@@ -246,7 +254,7 @@ elif [ "$language" = "csharp" ]; then
 
         test_pass=1
 
-        dotnet test --no-build $solution --configuration Release --verbosity minimal /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="./$test_reports" /p:ExcludeByFile=\"$exclude_files\"
+        dotnet test --no-build $solution --filter "$filter" --configuration Release --verbosity minimal /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput="./$test_reports" /p:ExcludeByFile=\"$exclude_files\"
 
         # Check if the tests fail and print the reason
         if [ $? -ne 0 ]; then
