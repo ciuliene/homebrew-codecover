@@ -17,19 +17,27 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Get latest tag
+        uses: actions-ecosystem/action-get-latest-tag@v1
+        id: get-latest-tag
+
+      - name: Bump semver
+        uses: actions-ecosystem/action-bump-semver@v1
+        id: bump-semver
+        with:
+          current_version: ${{ steps.get-latest-tag.outputs.tag }}
+          level: patch
+
+      - name: Push tag
+        uses: actions-ecosystem/action-push-tag@v1
+        with:
+          tag: ${{ steps.bump-semver.outputs.new_version }}
+          message: '${{ steps.bump-semver.outputs.new_version }}: PR #${{ github.event.pull_request.number }} ${{ github.event.pull_request.title }}'
+
+      - name: Get new tag
         id: get_release_tag
         run: |
           git fetch --tags
-          tag_name=$(git describe --tags $(git rev-list --tags --max-count=1))
-          echo "Previous tag: $tag_name"
-          IFS='.' read -r -a version <<< "$tag_name"
-          patch=$((version[2]+1))
-          new_tag="${version[0]}.${version[1]}.$patch"
-          echo "New tag: $new_tag"
-          echo "tag_name=$new_tag" >> "$GITHUB_OUTPUT"
-          git tag $new_tag
-          git push origin $new_tag
-
+          echo "tag_name=$(git describe --tags $(git rev-list --tags --max-count=1))" >> "$GITHUB_OUTPUT"
 
       - name: Create archive
         run: |
