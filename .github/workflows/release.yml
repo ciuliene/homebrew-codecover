@@ -2,9 +2,6 @@ name: Release
 
 
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
     branches:
       - main
@@ -24,14 +21,13 @@ jobs:
         run: |
           git fetch --tags
           tag_name=$(git describe --tags $(git rev-list --tags --max-count=1))
-          echo "Previous tag: $tag_name"
           IFS='.' read -r -a version <<< "$tag_name"
           patch=$((version[2]+1))
           new_tag="${version[0]}.${version[1]}.$patch"
-          echo "New tag: $new_tag"
           echo "tag_name=$new_tag" >> "$GITHUB_OUTPUT"
           git tag $new_tag
           git push origin $new_tag
+          echo "New version: $new_tag"
 
       - name: Create archive
         run: |
