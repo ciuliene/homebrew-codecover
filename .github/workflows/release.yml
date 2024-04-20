@@ -2,6 +2,9 @@ name: Release
 
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
     branches:
       - main
@@ -29,8 +32,6 @@ jobs:
           echo "tag_name=$new_tag" >> "$GITHUB_OUTPUT"
           git tag $new_tag
           git push origin $new_tag
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create archive
         run: |
