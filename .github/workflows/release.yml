@@ -20,8 +20,15 @@ jobs:
         id: get_release_tag
         run: |
           git fetch --tags
-          echo "tag_name=$(git describe --tags $(git rev-list --tags --max-count=1))" >> "$GITHUB_OUTPUT"
-      
+          tag_name=$(git describe --tags $(git rev-list --tags --max-count=1))
+
+          # Increment patch
+          IFS='.' read -r -a version <<< "$tag_name"
+          patch=$((version[2]+1))
+          new_tag="${version[0]}.${version[1]}.$patch"
+
+          echo "tag_name=$new_tag" >> "$GITHUB_OUTPUT"
+
       - name: Create archive
         run: |
           tar -czf codecover-v${{ steps.get_release_tag.outputs.tag_name }}.tar.gz main.sh
