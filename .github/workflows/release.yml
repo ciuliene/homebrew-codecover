@@ -27,11 +27,14 @@ jobs:
           new_tag="${version[0]}.${version[1]}.$patch"
           echo "New tag: $new_tag"
           echo "tag_name=$new_tag" >> "$GITHUB_OUTPUT"
+          git tag $new_tag
+          git push origin $new_tag
+
 
       - name: Create archive
         run: |
           tar -czf codecover-v${{ steps.get_release_tag.outputs.tag_name }}.tar.gz main.sh
-          
+
       - name: Create release
         uses: ncipollo/release-action@v1.14.0
         with:
