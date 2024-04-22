@@ -1,5 +1,7 @@
 #!/bin/sh
 
+version="<VERSION>"
+
 # Arguments
 
 config_file=$(pwd)/.codecover
@@ -10,7 +12,7 @@ exclude_files=""
 skip_build=false # only for csharp
 
 usage() {
-    echo "Usage: sh $0 (--csharp|--python) --test-dir <directory> [--filter <filter>] [--exclude-files <file1,file2,...>] [--skip-build] [-h|--help]"
+    echo "Usage: sh $0 (--csharp|--python) --test-dir <directory> [--filter <filter>] [--exclude-files <file1,file2,...>] [--skip-build] [-h|--help] [-v|--version]"
     echo "    --csharp           Use for csharp projects"
     echo "    --python           Use for python projects"
     echo "    --test-dir         Directory containing the test files"
@@ -18,7 +20,7 @@ usage() {
     echo "    --exclude-files    Comma separated list of files to exclude (optional)"
     echo "    --skip-build       Skip building the project (only for csharp)"
     echo "    -h, --help         Display this help and exit"
-    exit 1
+    echo "    -v, --version      Display version information and exit"
 }
 
 # Check if the config file exists and source it
@@ -59,6 +61,11 @@ if [ $# -gt 0 ]; then
             ;;
         --help | -h)
             usage
+            exit 0
+            ;;
+        --version | -v)
+            echo "CodeCover $version"
+            exit 0
             ;;
         *)
             # Print invalid argument

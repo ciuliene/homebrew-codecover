@@ -31,8 +31,8 @@ jobs:
 
       - name: Create archive
         run: |
-          echo $new_tag > version.txt
-          tar -czf codecover-v${{ steps.get_release_tag.outputs.tag_name }}.tar.gz main.sh version.txt
+          sed -i '' 's/<VERSION>/'$new_tag'/' main.sh
+          tar -czf codecover-v${{ steps.get_release_tag.outputs.tag_name }}.tar.gz main.sh
 
       - name: Create release
         uses: ncipollo/release-action@v1.14.0
