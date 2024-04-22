@@ -31,7 +31,7 @@ jobs:
 
       - name: Create archive
         run: |
-          sed -i "3s/<VERSION>/${{ steps_get_release_tag_outputs_tag_name }}/" main.sh
+          sed -i "3s/<VERSION>/${{ steps.get_release_tag.outputs.tag_name }}/" main.sh
           tar -czf codecover-v${{ steps.get_release_tag.outputs.tag_name }}.tar.gz main.sh
 
       - name: Create release
