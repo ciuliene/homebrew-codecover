@@ -36,7 +36,7 @@ jobs:
 
           new_tag=${{ steps.get_release_tag.outputs.tag_name}}
           chmod +x Formula/update_formula.sh
-          . ./Formula/update_formula.sh $new_tag
+          . ./Formula/update_formula.sh ciuliene codecover $new_tag
 
           git add Formula/codecover.rb
           git commit -m "Update formula to $new_tag"
