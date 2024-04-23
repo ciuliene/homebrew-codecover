@@ -77,7 +77,7 @@ if [ $# -gt 0 ]; then
     done
 fi
 
-# Validate mandatory arguments
+# Validate required arguments
 
 if [ "$language" = "" ]; then
     echo "\033[31mNo language specified\033[0m"
