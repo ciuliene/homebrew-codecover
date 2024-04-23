@@ -15,6 +15,6 @@ row5="sha256 \"$sha256\""
 row13="assert_match \"v${TAG}\", shell_output(\"#{bin}/${REPO} --version\")"
 
 # Replace values into the formula
-sed -i "4s/.*/$(echo "  $row4" | sed -e 's/[\/&]/\\&/g')/" Formula/$REPO.rb
-sed -i "5s/.*/$(echo "  $row5" | sed -e 's/[\/&]/\\&/g')/" Formula/$REPO.rb
+sed -i "4s/.*/$(echo "    $row4" | sed -e 's/[\/&]/\\&/g')/" Formula/$REPO.rb
+sed -i "5s/.*/$(echo "    $row5" | sed -e 's/[\/&]/\\&/g')/" Formula/$REPO.rb
 sed -i "13s/.*/$(echo "        $row13" | sed -e 's/[\/&]/\\&/g')/" Formula/$REPO.rb
