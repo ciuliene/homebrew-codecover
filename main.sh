@@ -64,7 +64,7 @@ if [ $# -gt 0 ]; then
             exit 0
             ;;
         --version | -v)
-            echo "CodeCover $version"
+            echo "v$version"
             exit 0
             ;;
         *)
