@@ -1,8 +1,8 @@
 #!/bin/bash
 
 USER="ciuliene"
-REPO="codecover"
-TAG=$1 # $(curl -s https://api.github.com/repos/${USER}/${REPO}/releases/latest | grep "tag_name" | cut -d '"' -f4)
+REPO="homebrew-codecover"
+TAG=$1
 
 # Get the URL of the release
 url="https://github.com/$USER/$REPO/releases/download/$TAG/${REPO}-v$TAG.tar.gz"
