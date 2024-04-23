@@ -27,7 +27,13 @@ jobs:
           echo "tag_name=$new_tag" >> "$GITHUB_OUTPUT"
 
       - name: Update formula
+        env:
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         run: |
+          git config user.email "release@workflow.com"
+          git config user.name "Release Workflow"
+          git remote set-url origin https://github.com/${{ github.repository }}.git
+
           new_tag=${{ steps.get_release_tag.outputs.tag_name}}
           chmod +x Formula/update_formula.sh
           . ./Formula/update_formula.sh $new_tag
