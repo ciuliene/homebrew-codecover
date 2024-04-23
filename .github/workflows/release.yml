@@ -25,6 +25,17 @@ jobs:
           patch=$((version[2]+1))
           new_tag="${version[0]}.${version[1]}.$patch"
           echo "tag_name=$new_tag" >> "$GITHUB_OUTPUT"
+
+      - name: Update formula
+        run: |
+          new_tag=${{ steps.get_release_tag.outputs.tag_name}}
+          chmod +x Formula/update_formula.sh
+          . ./Formula/update_formula.sh $new_tag
+
+          git add Formula/codecover.rb
+          git commit -m "Update formula to $new_tag"
+          git push origin main
+
           git tag $new_tag
           git push origin $new_tag
           echo "New version: $new_tag"
