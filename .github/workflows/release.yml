@@ -30,6 +30,17 @@ jobs:
           git push origin $new_tag
           echo "New version: $new_tag"
 
+      - name: Create archive
+        run: |
+          sed -i "3s/<VERSION>/${{ steps.get_release_tag.outputs.tag_name }}/" main.sh
+          tar -czf codecover-v${{ steps.get_release_tag.outputs.tag_name }}.tar.gz main.sh
+
+      - name: Create release
+        uses: ncipollo/release-action@v1.14.0
+        with:
+          artifacts: "codecover-v${{ steps.get_release_tag.outputs.tag_name }}.tar.gz"
+          tag: ${{ steps.get_release_tag.outputs.tag_name }}
+
       - name: Update formula
         env:
           ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
@@ -45,14 +56,3 @@ jobs:
           git add Formula/codecover.rb
           git commit -m "Update formula to $new_tag"
           git push origin main
-
-      - name: Create archive
-        run: |
-          sed -i "3s/<VERSION>/${{ steps.get_release_tag.outputs.tag_name }}/" main.sh
-          tar -czf codecover-v${{ steps.get_release_tag.outputs.tag_name }}.tar.gz main.sh
-
-      - name: Create release
-        uses: ncipollo/release-action@v1.14.0
-        with:
-          artifacts: "codecover-v${{ steps.get_release_tag.outputs.tag_name }}.tar.gz"
-          tag: ${{ steps.get_release_tag.outputs.tag_name }}
