@@ -1,8 +1,8 @@
 class Codecover < Formula
     desc "Generate code coverage report in `lcov` format for multiplatform projects"
     homepage "https://github.com/ciuliene/codecover"
-    url "https://github.com/ciuliene/codecover/releases/download/1.0.0/codecover-v1.0.0.tar.gz"
-    sha256 "71ed66948810c7464ec8755be17e4a4a714f4f8bb8cc481a20839885537697ba"
+  url "https://github.com/ciuliene/codecover/releases/download/1.0.1/codecover-v1.0.1.tar.gz"
+  sha256 "0019dfc4b32d63c1392aa264aed2253c1e0c2fb09216f8e2cc269bbfb8bb49b5"
     license "MIT"
 
     def install
@@ -10,6 +10,6 @@ class Codecover < Formula
     end
 
     test do
-        assert_match "v1.0.0", shell_output("#{bin}/codecover --version")
+        assert_match "v1.0.1", shell_output("#{bin}/codecover --version")
     end
 end
