@@ -77,6 +77,7 @@ After that, if not installed, the script installs the necessary dependencies tha
 - C# (.NET):
   - `coverlet.msbuild`
   - `coverlet.collector`
+  - `dotnet-reportgenerator-globaltool` (installed globally, it won't be removed) 
 - Python:
   - `coverage`
 

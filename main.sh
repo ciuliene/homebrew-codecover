@@ -138,7 +138,21 @@ if [ "$language" = "python" ]; then
 
     source $virtual_env/bin/activate > /dev/null
 
-    pip install coverage > /dev/null
+    # Check if coverage is already installed
+    pip_coverage=0
+    if echo $(pip freeze) | grep -q "coverage"; then
+        echo "\033[32mcoverage\033[0m already installed."
+    else
+        pip_coverage=1
+        echo "Installing \033[34mcoverage\033[0m in the project. It will be removed after the report is generated."
+        pip install coverage > /dev/null
+
+        # Check if installation was successful
+        if [ $? -ne 0 ]; then
+            echo "\033[31mError installing coverage\033[0m"
+            exit 1
+        fi
+    fi
 
     coverage run --omit $test_dir/*,*__init__.py,$exclude_files -m unittest discover -s $test_dir -v
 
@@ -151,7 +165,10 @@ if [ "$language" = "python" ]; then
         echo "\033[31mTests failed\033[0m"
     fi
 
-    pip uninstall --yes coverage > /dev/null
+    if [ $pip_coverage -eq 1 ]; then
+        echo "Removing \033[34mcoverage\033[0m from the project"
+        pip uninstall --yes coverage > /dev/null
+    fi
 
 elif [ "$language" = "csharp" ]; then
 
