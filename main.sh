@@ -10,6 +10,7 @@ test_dir=""
 filter=""
 exclude_files=""
 skip_build=false # only for csharp
+virtual_env="venv"
 
 usage() {
     echo "Usage: sh $0 (--csharp|--python) --test-dir <directory> [--filter <filter>] [--exclude-files <file1,file2,...>] [--skip-build] [-h|--help] [-v|--version]"
@@ -19,6 +20,7 @@ usage() {
     echo "    --filter           Filter for the test files (optional)"
     echo "    --exclude-files    Comma separated list of files to exclude (optional)"
     echo "    --skip-build       Skip building the project (only for csharp)"
+    echo "    --virtual-env      Virtual environment directory (default: venv)"
     echo "    -h, --help         Display this help and exit"
     echo "    -v, --version      Display version information and exit"
 }
@@ -58,6 +60,10 @@ if [ $# -gt 0 ]; then
         --skip-build)
             skip_build=true
             shift
+            ;;
+        --virtual-env)
+            virtual_env="$2"
+            shift 2
             ;;
         --help | -h)
             usage
@@ -107,6 +113,8 @@ echo "filter=\"$filter\"" >> "$config_file"
 echo "exclude_files=\"$exclude_files\"" >> "$config_file"
 if [ "$language" = "csharp" ]; then
     echo "skip_build=$skip_build" >> "$config_file"
+elif [ "$language" = "python" ]; then
+    echo "virtual_env=\"$virtual_env\"" >> "$config_file"
 fi
 
 # Print arguments
@@ -116,17 +124,19 @@ echo "Filter\t\t\033[34m$filter\033[0m"
 echo "Exclude Files\t\033[34m$exclude_files\033[0m"
 if [ "$language" = "csharp" ]; then
     echo "Skip Build\t\033[34m$skip_build\033[0m"
+elif [ "$language" = "python" ]; then
+    echo "Virtual Env\t\033[34m$virtual_env\033[0m"
 fi
 
 if [ "$language" = "python" ]; then
     
     # Check if virtual env exists
-    if [ ! -d "venv" ]; then
+    if [ ! -d $virtual_env ]; then
         echo "\033[31mVirtual environment not found\033[0m"
         exit 1
     fi
 
-    source venv/bin/activate > /dev/null
+    source $virtual_env/bin/activate > /dev/null
 
     pip install coverage > /dev/null
 
